@@ -14,6 +14,9 @@ public class PlayerNetwork : NetworkBehaviour
     // by default, it is: read by everyone, write only by server
 
 
+    [SerializeField] private Transform spawnedObjectPrefab;
+    private Transform spawnedObjectTransform;
+
 
     public struct MyCustomData : INetworkSerializable
     {
@@ -49,13 +52,19 @@ public class PlayerNetwork : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            myCustomData.Value = new MyCustomData { _int = Random.Range(0, 100), _bool = false, message = "You have a new message!" };
+            //myCustomData.Value = new MyCustomData { _int = Random.Range(0, 100), _bool = false, message = "You have a new message!" };
+
+            spawnedObjectTransform = Instantiate(spawnedObjectPrefab);
+            spawnedObjectTransform.GetComponent<NetworkObject>().Spawn(true);
+            // true for: destroy with scene
         }
 
         if (Input.GetKeyDown(KeyCode.Y))
         {
-            ulong targetClientId = 1;
-            TestOtherRpc(RpcTarget.Single(targetClientId, RpcTargetUse.Temp));
+            Destroy(spawnedObjectTransform.gameObject);
+
+            // ulong targetClientId = 1;
+            // TestOtherRpc(RpcTarget.Single(targetClientId, RpcTargetUse.Temp));
         }
 
 
